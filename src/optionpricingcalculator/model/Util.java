@@ -29,4 +29,25 @@ package optionpricingcalculator.model;
  */
 public class Util {
     
+    private final static double a1 = 0.31938153;
+    private final static double a2 = -0.356563782;
+    private final static double a3 = 1.781477937;
+    private final static double a4 = -1.821255978;
+    private final static double a5 = 1.330274429;
+    
+    public static double cumulativeNormalDistribution(double value) {
+        double l, k, w;
+        
+        l = Math.abs(value);
+        k = 1.0 / (1.0 + 0.2316419 * l);
+        w = 1.0 - 1.0 / Math.sqrt(2.0 * Math.PI) * 
+                Math.exp(-l * l / 2) * 
+                (a1 * k + a2 * k *k + a3 * Math.pow(k,3) + a4 * 
+                Math.pow(k,4) + a5 * Math.pow(k,5));
+        
+        if(value < 0.0) return 1.0 - w;
+        
+        return w;
+    }
+    
 }
