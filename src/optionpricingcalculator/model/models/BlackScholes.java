@@ -23,10 +23,43 @@
  */
 package optionpricingcalculator.model.models;
 
+import optionpricingcalculator.model.Util;
+
 /**
  *
  * @author victor
  */
 public class BlackScholes {
     
+    /**
+     * Based on the 73s formula.
+     * 
+     * @param putCallParity true if the price of a corresponding put option is based on a put-call parity
+     * @param stockPrice spot price of the underlying asset
+     * @param strikePrice strike price
+     * @param yearsToMaturity difference in years to maturity (Maturity year - current year)
+     * @param riskFreeRate annual rate, expressed in terms of continuous compounding
+     * @param volatility volatility of returns of the underlying asset
+     * @return 
+     */
+    public static double calculate(boolean putCallParity, double stockPrice, 
+            double strikePrice, double yearsToMaturity, double riskFreeRate, 
+            double volatility) {
+        double d1, d2;
+        
+        d1 = (Math.log(stockPrice / strikePrice) + 
+                (riskFreeRate + volatility * volatility / 2) * 
+                yearsToMaturity) / (volatility * Math.sqrt(yearsToMaturity));
+        
+        d2 = d1 - volatility * Math.sqrt(yearsToMaturity);
+        
+        if(putCallParity) 
+            return strikePrice * Math.exp(-riskFreeRate * yearsToMaturity) * 
+                    Util.cumulativeNormalDistribution(-d2) - stockPrice * 
+                    Util.cumulativeNormalDistribution(-d1);
+        else
+            return stockPrice * Util.cumulativeNormalDistribution(d1) - 
+                    strikePrice * Math.exp(-riskFreeRate * yearsToMaturity) * 
+                    Util.cumulativeNormalDistribution(d2);        
+    }
 }
