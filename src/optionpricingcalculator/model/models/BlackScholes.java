@@ -23,24 +23,30 @@
  */
 package optionpricingcalculator.model.models;
 
+import java.util.Date;
 import optionpricingcalculator.model.Util;
 
 /**
- *
+ * Black-Scholes model algorithms
+ * 
  * @author victor
  */
 public class BlackScholes {
-    
+        
     /**
      * Based on the 73s formula.
+     * For more information, consult: http://www.jstor.org/stable/1831029
      * 
-     * @param putCallParity true if the price of a corresponding put option is based on a put-call parity
+     * @param putCallParity true if the price of a corresponding put option is 
+     * based on a put-call parity
      * @param stockPrice spot price of the underlying asset
      * @param strikePrice strike price
-     * @param yearsToMaturity difference in years to maturity (Maturity year - current year)
-     * @param riskFreeRate annual rate, expressed in terms of continuous compounding
+     * @param yearsToMaturity difference in years to maturity 
+     * (Maturity year - current year)
+     * @param riskFreeRate annual rate, expressed in terms of continuous 
+     * compounding
      * @param volatility volatility of returns of the underlying asset
-     * @return 
+     * @return call value
      */
     public static double calculate(boolean putCallParity, double stockPrice, 
             double strikePrice, double yearsToMaturity, double riskFreeRate, 
@@ -62,4 +68,30 @@ public class BlackScholes {
                     strikePrice * Math.exp(-riskFreeRate * yearsToMaturity) * 
                     Util.cumulativeNormalDistribution(d2);        
     }
+    
+    /**
+     * Based on the 73s formula.
+     * For more information, consult: http://www.jstor.org/stable/1831029
+     * 
+     * @param putCallParity true if the price of a corresponding put option is 
+     * based on a put-call parity
+     * @param stockPrice spot price of the underlying asset
+     * @param strikePrice strike price
+     * @param expirationDate Expiration date in java.util.Date format
+     * @param riskFreeRate annual rate, expressed in terms of continuous 
+     * compounding
+     * @param volatility volatility of returns of the underlying asset
+     * @return call value
+     */
+    public static double calculate(boolean putCallParity, double stockPrice, 
+            double strikePrice, Date expirationDate, double riskFreeRate, 
+            double volatility) {
+        final long differenceInDays = (expirationDate.getTime() - 
+                new Date().getTime()) / (1000 * 60 * 60 * 24);
+        final double yearsToMaturity = differenceInDays / 365;
+        
+        return calculate(putCallParity, stockPrice, strikePrice, 
+                yearsToMaturity, riskFreeRate, volatility);
+    }
+
 }
